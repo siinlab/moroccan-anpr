@@ -6,21 +6,21 @@ from lgg import logger
 
 from yolo_utils import process_detection_request
 from utils import ModelType
+from config import Status, BoxOutput
 
 app = FastAPI()
 
 
-@app.get("/status")
+@app.get("/status", response_model=Status)
 async def check_status():
     """ Check the status of the server.
     Returns:
         str: A message indicating if the server is running.
     """
-    logger.info("Checking servers status ...")
-    return JSONResponse({'status': 'ok'})
+    return Status(status='ok')
 
 
-@app.post("/detection/{model_type}")
+@app.post("/detection/{model_type}", response_model=list(BoxOutput))
 async def upload(model_type: ModelType,
                  token: str = Form(...),
                  file: UploadFile = File(...),
