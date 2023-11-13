@@ -11,7 +11,8 @@ from lgg import logger
 from ultralytics import YOLO
 
 from config import CARS_MODEL_PATH, LP_MODEL_PATH, LPC_MODEL_PATH
-from utils import is_valid_token, save_uploaded_image, ModelType
+from utils import save_uploaded_image, ModelType
+from engine_utils import validate_api_key
 
 # Map latin characters to moroccan characters
 __CHARACTERS_MAPPING = {
@@ -68,7 +69,7 @@ def __predict(model_type: ModelType, input_source: Union[str, Image.Image]) -> T
 
 
 def validate_token(token: str):
-    if not is_valid_token(token):
+    if not validate_api_key(token):
         logger.error(f"Token `{token}` is invalid")
         raise HTTPException(status_code=498, detail="Invalid token")
 
