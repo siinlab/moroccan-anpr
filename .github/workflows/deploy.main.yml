@@ -1,17 +1,16 @@
 # The following secret variables are at organisation-level: CI_TOKEN, HOST_USERNAME, PRIVATE_KEY
 # Only, *_IP is repository-dependent
 
-name: CI/CD Pipeline for development
+name: CI/CD Pipeline for production
 
 on:
   push:
-    branches: develop
+    branches: main
 
 jobs:
   build_and_deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
    
-    
     steps:
     
       - name: Checkout Repository
@@ -46,8 +45,8 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker build . -t ${IMAGE_NAME}:${IMAGE_TAG}
-          docker save $IMAGE_NAME:$IMAGE_TAG | bzip2 | ssh -o StrictHostKeyChecking=no  -i ./privatekey ${{ secrets.HOST_USERNAME }}@${{ secrets.DEV_IP }} docker load
+          docker save $IMAGE_NAME:$IMAGE_TAG | bzip2 | ssh -o StrictHostKeyChecking=no  -i ./privatekey ${{ secrets.HOST_USERNAME }}@${{ secrets.PROD_IP }} docker load
 
       - name: Run Docker Image
         run: |
-          ssh -o StrictHostKeyChecking=no  -i ./privatekey ${{ secrets.HOST_USERNAME }}@${{ secrets.DEV_IP }} "~/infrastructure-server/scripts/docker-management/run-image.sh $IMAGE_NAME $IMAGE_TAG $APP_PORT"
+          ssh -o StrictHostKeyChecking=no  -i ./privatekey ${{ secrets.HOST_USERNAME }}@${{ secrets.PROD_IP }} "~/infrastructure-server/scripts/docker-management/run-image.sh $IMAGE_NAME $IMAGE_TAG $APP_PORT"
