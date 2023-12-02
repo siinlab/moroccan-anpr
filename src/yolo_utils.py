@@ -10,7 +10,7 @@ from fastapi import File, UploadFile, Form, HTTPException
 from lgg import logger
 from ultralytics import YOLO
 
-from config import CARS_MODEL_PATH, LP_MODEL_PATH, LPC_MODEL_PATH
+from config import CARS_MODEL_PATH, LP_MODEL_PATH, LPC_MODEL_PATH, BoxOutput
 from utils import save_uploaded_image, ModelType
 from engine_utils import validate_api_key
 
@@ -73,14 +73,11 @@ def validate_token(token: str):
         logger.error(f"Token `{token}` is invalid")
         raise HTTPException(status_code=498, detail="Invalid token")
 
-def handle_json_response(bboxes: List[np.array], label_names: List[dict]):
+def handle_json_response(bbox: List[np.array], label: List[dict]):
     logger.debug(f"Returning json response")
-    js_response = {
-        "bboxes": [b.tolist() for b in bboxes],
-        "labelNames": label_names
-    }
-    logger.debug(f'js_response: {js_response}')
-    return js_response
+    print(bbox)
+    print(label)
+    return [BoxOutput(x1=bbox[0], y1=bbox[1], x2=bbox[2], y2=bbox[3], score=bbox[4], label=label)]
 
 def process_detection_request(model_type: ModelType,
                               token: str = Form(...),
