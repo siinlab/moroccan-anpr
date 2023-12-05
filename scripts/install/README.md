@@ -1,1 +1,0 @@
-### If the installation process is complex, you can split it into several shell scripts and put them in the scripts/install directory.
