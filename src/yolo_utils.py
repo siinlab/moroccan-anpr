@@ -10,7 +10,7 @@ from fastapi import File, UploadFile, Form, HTTPException
 from lgg import logger
 from ultralytics import YOLO
 
-from config import CARS_MODEL_PATH, LP_MODEL_PATH, LPC_MODEL_PATH
+from config import CARS_MODEL_PATH, LP_MODEL_PATH, LPC_MODEL_PATH, BoxOutput
 from utils import save_uploaded_image, ModelType
 from engine_utils import validate_api_key
 
@@ -73,14 +73,11 @@ def validate_token(token: str):
         logger.error(f"Token `{token}` is invalid")
         raise HTTPException(status_code=498, detail="Invalid token")
 
-def handle_json_response(bboxes: List[np.array], label_names: List[dict]):
+def handle_json_response(bboxes: List[np.array], labels_map: List[dict]):
     logger.debug(f"Returning json response")
-    js_response = {
-        "bboxes": [b.tolist() for b in bboxes],
-        "labelNames": label_names
-    }
-    logger.debug(f'js_response: {js_response}')
-    return js_response
+    bboxes = bboxes[0] # TODO: handle multiple images
+    labels_map = labels_map[0]
+    return [BoxOutput(x1=bbox[0], y1=bbox[1], x2=bbox[2], y2=bbox[3], score=bbox[4], label=labels_map[int(bbox[5])]) for bbox in bboxes]
 
 def process_detection_request(model_type: ModelType,
                               token: str = Form(...),
@@ -128,8 +125,7 @@ def anpr_detection(input_source: Union[str, Image.Image]) -> Tuple[
     bboxes = bboxes[0]
     # check if array is empty
     if bboxes.size == 0:
-        logger.info("No cars detected")
-        return bboxes, labels
+        bboxes = np.array([0,0, original_image.width, original_image.height, 0.5, 0]).reshape(1, 6)
     bboxes = bboxes[bboxes[:, 5] == car_index]  # keep only the car
     
     # keep only the car with highest probability
@@ -143,19 +139,18 @@ def anpr_detection(input_source: Union[str, Image.Image]) -> Tuple[
     bboxes = bboxes[0]
     if bboxes.size == 0:
         logger.info("No license plates detected")
-        return bboxes, labels
+        return np.array([[]]), [{}]
     
     bboxes = bboxes[np.argmax(bboxes[:, 4])]
     clean_img = clean_img.crop(bboxes[0:4])
     lp_bbox = bboxes[0:4] + car_bbox[[0, 1, 0, 1]]
+    score = bboxes[4]
 
     bboxes, labels = detect_lpc(clean_img)
-    lpc_bbox = bboxes[0:4] + lp_bbox[[0, 1, 0, 1]]
+    bboxes = bboxes[0]
+    lp_string = convert_characters_to_string(bboxes, labels[0])
 
-    lp_string = convert_characters_to_string(bboxes[0], labels[0])
-
-
-    return lpc_bbox, lp_string
+    return [np.array([[*lp_bbox.tolist(), score, 0]])], [{0: lp_string}]
 
 def detect_cars(input_source: Union[str, PIL.Image.Image]) -> Tuple[
     PIL.Image.Image, Tuple[List[np.ndarray], List[dict]]]:
@@ -214,9 +209,6 @@ def predict(model_path: str, input_source: Union[str, PIL.Image.Image]) -> \
     """
 
     bboxes, label_names = predict_bbox(model_path, input_source)
-    logger.debug(f"{bboxes=}")
-    logger.debug(f"{label_names=}")
-
     return bboxes, label_names
  
 

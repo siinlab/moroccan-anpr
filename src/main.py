@@ -20,7 +20,7 @@ async def check_status():
     return Status(status='ok')
 
 
-@app.post("/detection/{model_type}", response_model=list(BoxOutput))
+@app.post("/detection/", response_model=list[BoxOutput])
 async def upload(model_type: ModelType,
                  token: str = Form(...),
                  file: UploadFile = File(...),
