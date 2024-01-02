@@ -3,7 +3,6 @@
 
 name: CI/CD Pipeline for production
 
-
 on:
   push:
     branches: 
@@ -20,8 +19,8 @@ jobs:
           token: ${{ secrets.CI_TOKEN }}
 
   build_and_deploy:
-    uses: similar-Intelligence/infrastructure-server/.github/workflows/deploy.main.yml@main
+    uses: similar-Intelligence/infrastructure-server/.github/workflows/deployment.yml@main
     secrets: 
-     PROD_IP: ${{secrets.PROD_IP}}
+     IP: ${{secrets.PROD_IP}}
      HOST_USERNAME: ${{secrets.HOST_USERNAME}}
      SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
