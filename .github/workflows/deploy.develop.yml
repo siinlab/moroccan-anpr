@@ -24,3 +24,4 @@ jobs:
      IP: ${{secrets.DEV_IP}}
      HOST_USERNAME: ${{secrets.HOST_USERNAME}}
      SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+     SIIN_API_URL: "https://api.dev.siinlab.com/"
