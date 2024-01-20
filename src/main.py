@@ -1,15 +1,16 @@
 from contextlib import asynccontextmanager
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse
 
 from fastapi import FastAPI, HTTPException
 from fastapi import File, UploadFile, Form
 from lgg import logger
+from os.path import abspath, dirname, join
 
 from yolo_utils import process_detection_request
 from utils import ModelType
 from config import Status, BoxOutput
 
-from engine_utils import load_api_keys, api_key_router, ApiKeyException, validate_api_key
+from engine_utils import load_api_keys, api_key_router, ApiKeyException, validate_api_key, html_documentation
 
 
 @asynccontextmanager
@@ -22,6 +23,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(api_key_router)
+
+@app.get('/')
+async def get_documentation():
+    html = html_documentation(join(abspath(dirname(__file__)), '..', 'Documentation.md'))
+    return HTMLResponse(content=html)
 
 @app.get("/status", response_model=Status)
 async def check_status():
