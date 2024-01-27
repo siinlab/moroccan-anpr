@@ -1,0 +1,23 @@
+name: Create Pull Request every monday
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"
+
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+jobs:
+  checkout-repository:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          submodules: "true"
+          token: ${{ secrets.CI_TOKEN }}
+
+  create-pull-request:
+    uses: similar-Intelligence/infrastructure-server/.github/workflows/pull-request.yml@develop
+    secrets:
+      GH_TOKEN: ${{secrets.GH_TOKEN}}
