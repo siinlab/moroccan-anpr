@@ -12,7 +12,6 @@ from ultralytics import YOLO
 
 from config import CARS_MODEL_PATH, LP_MODEL_PATH, LPC_MODEL_PATH, BoxOutput
 from utils import save_uploaded_image, ModelType
-from engine_utils import validate_api_key
 
 # Map latin characters to moroccan characters
 __CHARACTERS_MAPPING = {
@@ -66,13 +65,6 @@ def __predict(model_type: ModelType, input_source: Union[str, Image.Image]) -> T
         logger.error(f"Invalid model type: {model_type}")
         raise ValueError(f"Invalid model type: {model_type}")
 
-
-
-def validate_token(token: str):
-    if not validate_api_key(token):
-        logger.error(f"Token `{token}` is invalid")
-        raise HTTPException(status_code=498, detail="Invalid token")
-
 def handle_json_response(bboxes: List[np.array], labels_map: List[dict]):
     logger.debug(f"Returning json response")
     bboxes = bboxes[0] # TODO: handle multiple images
@@ -80,13 +72,10 @@ def handle_json_response(bboxes: List[np.array], labels_map: List[dict]):
     return [BoxOutput(x1=bbox[0], y1=bbox[1], x2=bbox[2], y2=bbox[3], score=bbox[4], label=labels_map[int(bbox[5])]) for bbox in bboxes]
 
 def process_detection_request(model_type: ModelType,
-                              token: str = Form(...),
                               file: UploadFile = File(...)):
     """ Process a detection request. """
 
     logger.info(f"Detecting `{model_type}` in {file.filename}...")
-
-    validate_token(token)
 
     logger.debug(f"Loading model {model_type}")
 
