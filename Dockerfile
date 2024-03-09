@@ -8,6 +8,8 @@ COPY src/ /root/src
 COPY models/ /root/models
 COPY scripts/ /root/scripts
 COPY Documentation.md /root/Documentation.md
+COPY CHANGELOG.md /root/CHANGELOG.md
+COPY VERSION /root/VERSION
 
 RUN bash scripts/install.sh
 
