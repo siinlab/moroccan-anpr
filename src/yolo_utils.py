@@ -72,7 +72,8 @@ def handle_json_response(bboxes: List[np.array], labels_map: List[dict]):
     return [BoxOutput(x1=bbox[0], y1=bbox[1], x2=bbox[2], y2=bbox[3], score=bbox[4], label=labels_map[int(bbox[5])]) for bbox in bboxes]
 
 def process_detection_request(model_type: ModelType,
-                              file: UploadFile = File(...)):
+                              file: UploadFile = File(...),
+                              image: Image.Image = None):
     """ Process a detection request. """
 
     logger.info(f"Detecting `{model_type}` in {file.filename}...")
@@ -80,8 +81,11 @@ def process_detection_request(model_type: ModelType,
     logger.debug(f"Loading model {model_type}")
 
     try:
-        path = save_uploaded_image(file)
-        logger.info(f"Successfully uploaded {file.filename}")
+        if image is None:
+            path = save_uploaded_image(file)
+            logger.info(f"Successfully uploaded {file.filename}")
+        else:
+            path = image
 
         bboxes, label_names = __predict(model_type=model_type, input_source=path)
         
