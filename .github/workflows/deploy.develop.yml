@@ -9,19 +9,11 @@ on:
      - develop
 
 jobs:
-  checkout-repository:
-    runs-on: self-hosted
-    steps :
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        with:
-          submodules: "true"
-          token: ${{ secrets.CI_TOKEN }}
-
-  build_and_deploy:
+  build-and-deploy:
     uses: similar-Intelligence/infrastructure-server/.github/workflows/deployment.yml@develop
     secrets: 
-     IP: ${{secrets.DEV_IP}}
-     HOST_USERNAME: ${{secrets.HOST_USERNAME}}
      SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-     SIIN_API_URL: "https://api.dev.siinlab.com/v1/"
+     SIIN_API_URL: "https://api.dev.siinlab.com/"
+     HOST_USERNAME: ${{secrets.HOST_USERNAME}}
+     CI_TOKEN: ${{secrets.CI_TOKEN}}
+     IP: ${{secrets.DEV_IP}}
