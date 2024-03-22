@@ -1,17 +1,22 @@
 # The following secret variables are at organisation-level: CI_TOKEN, HOST_USERNAME, PRIVATE_KEY
-# Only, *_IP is repository-dependent
+# Only, *_IP is repository-dependent.
+
 
 name: CI/CD Pipeline for development
+
 
 on:
   push:
     branches: 
      - develop
 
+
 jobs:
   build-and-deploy:
     uses: similar-Intelligence/infrastructure-server/.github/workflows/deployment.yml@develop
-    secrets: 
+    with:
+      runner: runner-name
+    secrets:
      SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
      SIIN_API_URL: "https://api.dev.siinlab.com/"
      HOST_USERNAME: ${{secrets.HOST_USERNAME}}
