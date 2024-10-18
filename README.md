@@ -26,3 +26,14 @@ MOROCCAN_ANPR_SYSTEM/
 ├── Dockerfile       # Docker configuration file
 ├── .gitignore       # Files and directories to ignore in Git
 └── README.md        # Project documentation (this file)
+
+## 🚀 How to Run the Application
+
+1. Clone the Repository
+Open a terminal and run the following command:
+
+```bash
+Copy code
+git clone <your-repository-url>
+cd MOROCCAN_ANPR_SYSTEM
+```
