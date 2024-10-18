@@ -3,6 +3,9 @@
 This project is an Automatic Number Plate Recognition (ANPR) system tailored for Moroccan license plates. It leverages **YOLO models** for detecting cars, license plates, and individual characters, integrated with **Streamlit** for a user-friendly web interface.
 
 ---
+## 🎥 Video Demo
+
+https://github.com/user-attachments/assets/597304cf-1499-45a2-8286-3d5e71c9341a
 
 ## 📑 Project Structure
 
@@ -104,8 +107,7 @@ This project is licensed under the MIT License.
 - Push the branch (git push origin feature-branch).
 - Open a Pull Request.
 
-## 🧑‍💻 Authors
-Your Name
+
 
 ## 📞 Contact
 If you have any questions or issues, feel free to reach out at:
