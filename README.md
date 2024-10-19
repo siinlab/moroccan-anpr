@@ -112,5 +112,5 @@ This project is licensed under the MIT License.
 ## 📞 Contact
 If you have any questions or issues, feel free to reach out at:
 
-Email: ayoub@siinlab.com
+Email: contact@siinlab.com
 
