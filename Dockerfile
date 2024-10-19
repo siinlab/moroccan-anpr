@@ -1,16 +1,25 @@
-FROM python:3.11.6
+# Use the official Python image from the Docker Hub
+FROM python:3.9-slim
 
-WORKDIR /root
+# Set the working directory in the container
+WORKDIR /app
 
-COPY requirements.txt /root/
-COPY utils/ /root/utils
-COPY src/ /root/src
-COPY models/ /root/models
-COPY scripts/ /root/scripts
-COPY Documentation.md /root/Documentation.md
-COPY CHANGELOG.md /root/CHANGELOG.md
-COPY VERSION /root/VERSION
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
 
-RUN bash scripts/install.sh
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["bash", "scripts/run.sh"]
+# Copy the entire project into the container
+COPY . .
+
+# Expose the port that Streamlit will run on
+EXPOSE 8501
+
+# Set environment variables to avoid Streamlit's interactive prompts
+ENV STREAMLIT_SERVER_HEADLESS true
+ENV STREAMLIT_SERVER_PORT 8501
+ENV STREAMLIT_SERVER_ENABLE_CORS false
+
+# Command to run the Streamlit app
+CMD ["streamlit", "run", "anpr_app.py"]

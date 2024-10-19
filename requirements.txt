@@ -6,3 +6,4 @@ lgg==0.2.4
 ultralytics==8.0.153
 pillow
 dill
+streamlit
